@@ -8,11 +8,11 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    mavenLocal()
+//    mavenLocal()
 }
 
 dependencies {
-    api("io.github.likespro:axusid-core:0.0.1")
+//    api("io.github.likespro:axusid-core:0.0.1")
     implementation("io.github.likespro:commons-core:3.1.0")
     implementation("io.github.likespro:lpfcp-core:1.1.0")
     implementation("io.ktor:ktor-serialization-gson:3.1.3")
