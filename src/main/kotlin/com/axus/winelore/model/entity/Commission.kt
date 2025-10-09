@@ -17,18 +17,25 @@ data class Commission(
     var startedAt: Timestamp? = null,
     val endedAt: Timestamp? = null,
 ): Entity<Commission.Id> {
-    class CompetitionIdAndNameAreAlreadyUsedException : RuntimeException("Commission Competition.Id and Name are already used.")
-    class IsNotApprovedException : RuntimeException("Commission must be approved before starting.")
-    class IsNotStartedException : RuntimeException("Commission is not started yet.")
-    class IsAlreadyStartedException : RuntimeException("Commission is already started.")
-    class IsAlreadyEndedException : RuntimeException("Commission is already ended.")
-    class NoWineSamplesException : RuntimeException("Commission must have at least one WineSample to start.")
+    open class IsIncorrectException(override val message: String) : RuntimeException()
+    class CompetitionIdAndNameAreAlreadyUsedException : IsIncorrectException("Commission Competition.Id and Name are already used.")
+    class IsNotApprovedException : IsIncorrectException("Commission must be approved before starting.")
+    class IsNotStartedException : IsIncorrectException("Commission is not started yet.")
+    class IsNotEndedException : IsIncorrectException("Commission is not ended yet.")
+    class IsAlreadyStartedException : IsIncorrectException("Commission is already started.")
+    class IsAlreadyEndedException : IsIncorrectException("Commission is already ended.")
+    class NoWineSamplesException : IsIncorrectException("Commission must have at least one WineSample to start.")
+    class CurrentWineSampleIdMismatchException : IsIncorrectException("Current WineSample.Id is incorrect -- actual one is another one.")
+    class NotAllCommissionParticipantsAssessedCurrentWineSampleException : IsIncorrectException("Not all CommissionParticipants have assessed current WineSample yet.")
 
     @Serializable
     data class Id(
         val value: String = UUID.randomUUID().toString()
     ): Value, Validatable<Id> {
-        class IsInvalidException(override val message: String) : RuntimeException()
+        open class IsInvalidException(override val message: String) : RuntimeException()
+
+        open class IsIncorrectException(override val message: String) : RuntimeException()
+        class NotFoundException : IsIncorrectException("Commission with given Id not found.")
 
         init {
             throwIfInvalid()

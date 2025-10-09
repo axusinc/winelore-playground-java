@@ -6,6 +6,7 @@ import com.axus.winelore.model.entity.*
 import com.axus.winelore.model.entity.WineSample.Code
 import com.axus.winelore.model.entity.WineSampleAssessment.Mark
 import eth.likespro.commons.models.Pagination
+import eth.likespro.commons.models.value.Count
 import eth.likespro.commons.models.value.Iteration
 import eth.likespro.commons.models.value.Timestamp
 import org.json.JSONObject
@@ -41,6 +42,13 @@ interface WineLoreEndpoint {
     fun getCommission(id: Commission.Id): Commission?
     fun getCommissionByCompetitionIdAndName(competitionId: Competition.Id, name: Commission.Name): Commission?
     fun startCommission(auid: AUID, commissionId: Commission.Id, tokenId: Token.Id)
+    fun nextWineSample(auid: AUID, commissionId: Commission.Id, currentWineSampleId: WineSample.Id, tokenId: Token.Id): WineSample.Id
+    fun filterCommissions(
+        competitionId: Competition.Id?,
+        name: Commission.Name?,
+        isApproved: Boolean?,
+        pagination: Pagination
+    ): List<Commission>
 
     // <============ CommissionParticipant Service ============>
 
@@ -49,9 +57,10 @@ interface WineLoreEndpoint {
     fun getCommissionParticipantByCommissionIdAndAUID(commissionId: Commission.Id, auid: AUID): CommissionParticipant?
     fun getCommissionsByParticipant(auid: AUID, pagination: Pagination): List<Pair<Commission, CommissionParticipant>>
     fun filterCommissionParticipants(commissionId: Commission.Id?, auid: AUID?, role: CommissionParticipant.Role?, pagination: Pagination): List<CommissionParticipant>
+    fun filterAndCountCommissionParticipants(commissionId: Commission.Id?, auid: AUID?, role: CommissionParticipant.Role?): Count
 
     // <============ WineSample Service ============>
-
+    
     fun createWineSample(commissionId: Commission.Id, wineId: Wine.Id, code: WineSample.Code, previousWineSampleId: WineSample.Id, tokenId: Token.Id): WineSample
     fun isExistingWineSample(id: WineSample.Id): Boolean
     fun getWineSample(id: WineSample.Id): WineSample?
@@ -74,4 +83,17 @@ interface WineLoreEndpoint {
         metadata: JSONObject = JSONObject(),
         tokenId: Token.Id,
     ): WineSampleAssessment
+    fun filterWineSampleAssessments(
+        commissionId: Commission.Id?,
+        from: AUID?,
+        wineSampleId: WineSample.Id?,
+        mark: Mark?,
+        pagination: Pagination
+    ): List<WineSampleAssessment>
+    fun filterAndCountWineSampleAssessments(
+        commissionId: Commission.Id?,
+        from: AUID?,
+        wineSampleId: WineSample.Id?,
+        mark: Mark?,
+    ): Count
 }
